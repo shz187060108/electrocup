@@ -1,0 +1,94 @@
+\section{问题一模型的建立与求解}
+
+问题一的目标是预测第 1 年至第 5 年末各小区三类老人数量，并进一步得到第 5 年末六类养老服务的理论需求和消费约束后有效需求。本文将该问题建模为多状态人口递推模型和消费约束需求修正模型。
+
+\subsection{模型的建立}
+
+\subsubsection{老人健康状态转移模型}
+
+设小区 $i$ 在第 $t$ 年末的老人状态向量为
+\begin{equation}
+\bm{N}_{i}^{(t)}=\left(N_{i,1}^{(t)},N_{i,2}^{(t)},N_{i,3}^{(t)}\right).
+\end{equation}
+其中 $N_{i,1}^{(t)}$、$N_{i,2}^{(t)}$ 和 $N_{i,3}^{(t)}$ 分别表示自理、半失能和失能老人数量。设小区 $i$ 的健康状态转移矩阵为
+\begin{equation}
+\bm{P}_i=
+\begin{bmatrix}
+1-p_i & p_i & 0\\
+0 & 1-q_i & q_i\\
+0 & 0 & 1
+\end{bmatrix}.
+\end{equation}
+考虑自然死亡率 $d$ 和新增老人比例 $g$ 后，状态递推式为
+\begin{equation}
+\bm{N}_{i}^{(t+1)}=(1-d)\bm{N}_{i}^{(t)}\bm{P}_i+
+\left(g\sum_{k=1}^{3}N_{i,k}^{(t)},0,0\right).
+\label{eq:markov}
+\end{equation}
+式 \eqref{eq:markov} 表明，老人状态先按健康转移矩阵更新，再考虑自然死亡，最后将新增老人并入自理状态。
+
+\subsubsection{理论服务需求模型}
+
+设第 $k$ 类老人对第 $m$ 类服务的月均理论需求次数为 $a_{k,m}$，服务需求频次矩阵为
+\begin{equation}
+\bm{A}=\left(a_{k,m}\right)_{3\times 6}.
+\end{equation}
+则第 5 年末小区 $i$ 的理论月需求向量为
+\begin{equation}
+\bm{D}_{i}^{\mathrm{th}}=\bm{N}_{i}^{(5)}\bm{A},
+\end{equation}
+即
+\begin{equation}
+D_{i,m}^{\mathrm{th}}=\sum_{k=1}^{3}N_{i,k}^{(5)}a_{k,m}.
+\end{equation}
+
+\subsubsection{消费能力约束修正模型}
+
+设第 $m$ 类服务的基准价格为 $c_m$，第 $k$ 类老人的月消费上限为 $B_k$。第 $k$ 类老人在理论需求下的月服务费用为
+\begin{equation}
+E_k=\sum_{m=1}^{6}a_{k,m}c_m.
+\end{equation}
+消费约束修正系数定义为
+\begin{equation}
+\lambda_k=\min\left\{1,\frac{B_k}{E_k}\right\}.
+\end{equation}
+由此得到消费约束后的月需求量
+\begin{equation}
+D_{i,m}^{\mathrm{bd}}=\sum_{k=1}^{3}N_{i,k}^{(5)}\lambda_k a_{k,m}.
+\label{eq:budget_demand}
+\end{equation}
+若 $\lambda_k<1$，说明该类老人理论需求受到支付能力限制，需要按比例压缩；若 $\lambda_k=1$，说明消费能力足以支撑理论需求。
+
+\subsection{模型的求解}
+
+\subsubsection{递推求解流程}
+
+本文首先读取附件 1 中 10 个小区的初始老人结构和状态转移概率，利用式 \eqref{eq:markov} 连续递推 5 年。随后将第 5 年末老人状态向量代入服务需求矩阵，得到理论月需求量。最后利用式 \eqref{eq:budget_demand} 对理论需求进行消费约束修正。为避免逐年取整造成误差累积，递推过程中保留小数，仅在表格展示时对人数和服务次数进行取整或保留两位小数。
+
+\subsubsection{预测结果}
+
+\begin{table}[H]
+\centering
+\caption{第 5 年末各小区三类老人数量预测结果}
+\label{tab:pop5}
+\begin{tabular}{c r r r r}
+\toprule
+小区 & 自理老人 & 半失能老人 & 失能老人 & 老人总数 \\
+\midrule
+A & 521.21 & 150.53 & 114.36 & 786.11 \\
+B & 435.52 & 129.37 & 106.38 & 671.28 \\
+C & 668.01 & 198.66 & 149.08 & 1015.75 \\
+D & 391.49 & 115.37 & 93.76 & 600.62 \\
+E & 567.68 & 168.39 & 129.53 & 865.60 \\
+F & 345.03 & 101.17 & 74.93 & 521.13 \\
+G & 626.41 & 184.84 & 142.67 & 953.93 \\
+H & 413.54 & 122.69 & 90.89 & 627.12 \\
+I & 533.42 & 159.45 & 119.73 & 812.60 \\
+J & 479.61 & 140.37 & 104.29 & 724.28 \\
+\midrule
+合计 & 4981.93 & 1470.85 & 1125.63 & 7578.41 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+由表 \ref{tab:pop5} 可知，第 5 年末全区老人总量约为 7578 人。其中自理老人仍占主体，但半失能与失能老人合计约为 2596 人，表明上门护理、康复理疗、助浴和紧急救助等非简单生活类服务将在后续站点配置中形成显著容量压力。
