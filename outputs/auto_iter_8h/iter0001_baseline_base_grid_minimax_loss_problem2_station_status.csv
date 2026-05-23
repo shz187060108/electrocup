@@ -1,0 +1,5 @@
+﻿station,scale,capacity,build_cost_wan,fixed_daily_cost,utilization,response_score,assigned_communities
+A,小型,1000.0,18.0,2000.0,0.8257183708086102,0.85,A
+F,大型,3000.0,45.0,4400.0,0.8370049021479602,0.85,"E,F,G"
+H,小型,1000.0,18.0,2000.0,4.66905376734431,0.6,"B,C,D,H,I,J"
+I,小型,1000.0,18.0,2000.0,0.0,1.0,

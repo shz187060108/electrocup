@@ -1,0 +1,2 @@
+﻿station,scale,capacity,build_cost_wan,fixed_daily_cost,utilization,response_score,assigned_communities
+A,大型,3000.0,45.0,4400.0,1.016331342203601,0.6,"A,B,D,H,J"

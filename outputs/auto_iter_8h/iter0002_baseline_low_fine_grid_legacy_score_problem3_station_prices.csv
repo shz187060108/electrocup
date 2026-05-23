@@ -1,0 +1,7 @@
+﻿station,service,base_price,optimized_price,price_satisfaction
+A,助餐,10.0,10.0,1.0
+A,日间照料,20.0,20.0,1.0
+A,上门护理,30.0,15.0,1.0
+A,康复理疗,28.0,21.0,1.0
+A,助浴,25.0,12.5,1.0
+A,紧急救助,0.0,0.0,1.0

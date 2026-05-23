@@ -1,0 +1,17 @@
+{
+  "started_at_epoch": 1779481351.050404,
+  "duration_hours": 8.0,
+  "scenarios": [
+    "baseline",
+    "elderly_growth_8pct",
+    "transition_up",
+    "fixed_cost_up_20pct",
+    "budget_140"
+  ],
+  "price_profiles": [
+    "base_grid",
+    "low_fine_grid",
+    "profit_edge_grid"
+  ],
+  "objective_note": "Problem 2 is exhaustively enumerated per scenario. Leaderboards use service-first multi-objective ranking because the legacy scalar score over-rewards low overload even when coverage is poor."
+}

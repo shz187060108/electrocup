@@ -1,0 +1,95 @@
+project:
+  name: 电工杯B题_嵌入式社区养老服务站优化
+  seed: 42
+  output_dir: outputs/results
+  figure_dir: outputs/figures
+  log_dir: outputs/logs
+
+data:
+  raw_dir: data/raw
+  attachment1: 附件1：小区基础数据.xlsx
+  attachment2: 附件2：服务需求数据.xlsx
+  attachment3: 附件3：服务站建设与运营成本.xlsx
+  attachment4: 附件4：小区间距离矩阵.xlsx
+  attachment5: 附件5：满意度评分规则.xlsx
+
+problem1:
+  name: 问题一：未来五年老人数量与服务需求量预测
+  years: 5
+  death_rate: 0.05
+  new_elderly_rate: 0.07
+  state_transition_order: transition_then_death_then_new_self
+  round_output: true
+
+problem2:
+  name: 问题二：服务站选址与规模优化
+  budget_wan: 120
+  service_radius_m: 1000
+  days_per_month: 30
+  days_per_year: 365
+  satisfaction_target: 0.85
+  # 多目标评分。覆盖率与满意度是主目标，掉档损失和高利用率为惩罚项，利润为弱约束型辅助目标。
+  weights:
+    coverage: 1000.0
+    average_satisfaction: 120.0
+    min_satisfaction: 80.0
+    drop_loss: -0.08
+    threshold_drop_loss: -0.04
+    utilization_penalty: -60.0
+    profit: 0.000001
+  # 满意度掉档损失的底线。综合满意度、距离、响应、价格分开计算，便于论文解释。
+  loss_targets:
+    comprehensive: 0.85
+    distance: 0.75
+    response: 0.85
+    price: 1.00
+  component_loss_weights:
+    distance: 0.2
+    response: 0.3
+    price: 0.5
+  fixed_point:
+    max_iter: 60
+    tolerance: 1.0e-9
+    tie_breaker: distance_then_low_utilization
+  enumeration:
+    # 完整规划版：不做候选预筛选，枚举所有预算可行的位置-规模组合。
+    # 120万元预算下，理论上最多建6个小型站；设为null表示由预算自动控制。
+    max_station_count: null
+    show_progress: true
+    progress_every: 1000
+
+problem3:
+  name: 问题三：服务定价与政府补贴优化
+  profit_rate_upper: 0.08
+  profit_rate_lower: 0.0
+  subsidy_per_effective_person_time: 2.0
+  candidate_price_multipliers: [0.60, 0.70, 0.80, 0.90, 0.95, 1.00, 1.05, 1.10, 1.15, 1.20]
+  emergency_service_name: 紧急救助
+  emergency_price: 0.0
+  pricing_search:
+    # 完整规划版：五类收费服务临界价格全组合枚举。
+    max_combinations_per_station: null
+
+problem4:
+  name: 问题四：灵敏度分析与方案比较
+  # 完整规划版：每个情景均重新运行问题一、问题二和问题三。
+  scenarios:
+    baseline:
+      description: 基准情景
+    elderly_growth_8pct:
+      description: 老人增长率调整为8%
+      problem1:
+        new_elderly_rate: 0.08
+    transition_up:
+      description: 自理转半失能5.5%，半失能转失能9.5%
+      transitions:
+        自理 → 半失能: 0.055
+        半失能 → 失能: 0.095
+    fixed_cost_up_20pct:
+      description: 日固定管理成本增加20%
+      cost_multiplier:
+        fixed_daily_cost: 1.20
+    budget_140:
+      description: 总建设预算调整为140万元
+      problem2:
+        budget_wan: 140

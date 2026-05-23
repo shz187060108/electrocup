@@ -1,0 +1,19 @@
+{
+  "coverage_rate": 0.9999999999999999,
+  "covered_elderly": 7578.410633164799,
+  "average_satisfaction": 0.8774662004662004,
+  "min_satisfaction": 0.8,
+  "drop_loss": 26.05630695551996,
+  "threshold_drop_loss": 584.014581660672,
+  "distance_drop_loss": 78.16892086656,
+  "response_drop_loss": 1894.6026582911998,
+  "price_drop_loss": 0.0,
+  "max_utilization": 1.088294006717262,
+  "overload": 0.10365105734552782,
+  "high_util_penalty": 0.5364045112239081,
+  "annual_profit_yuan": 3998676.8531396473,
+  "score": -102535.39208311505,
+  "station_count": 3,
+  "total_capacity": 7000.0,
+  "total_build_cost_wan": 108.0
+}
