@@ -1,0 +1,75 @@
+\section{问题三模型的建立与求解}
+
+问题三在问题二选址方案已确定的基础上研究定价问题。定价既影响老人价格满意度，也影响服务站收入和利润率。本文将该问题构造为政府补贴约束下的分段价格满意度优化模型。
+
+\subsection{模型的建立}
+
+\subsubsection{定价变量}
+
+设可定价服务集合为 $\mathcal{M}_p=\{1,2,3,4,5\}$，分别表示助餐、日间照料、上门护理、康复理疗和助浴。紧急救助为公益免费项目，价格固定为 0。设第 $m$ 类服务基准价格为 $p_m^0$，优化价格为 $p_m$。
+
+\subsubsection{价格满意度函数}
+
+价格满意度为分段函数：
+\begin{equation}
+S_m^p(p_m)=
+\begin{cases}
+1, & p_m\leq p_m^0,\\
+0.90, & p_m^0<p_m\leq 1.1p_m^0,\\
+0.75, & 1.1p_m^0<p_m\leq 1.2p_m^0,\\
+0.60, & p_m>1.2p_m^0.
+\end{cases}
+\end{equation}
+由于在同一满意度区间内继续提高价格不会提高满意度，最优价格只需在临界点附近搜索。本文设置候选价格集合为
+\begin{equation}
+\mathcal{P}_m=\{0.8p_m^0,0.9p_m^0,p_m^0,1.1p_m^0,1.2p_m^0\}.
+\end{equation}
+
+\subsubsection{政府补贴与利润率约束}
+
+设服务站 $j$ 第 $m$ 类服务的年有效服务人次为 $E_{j,m}$，单次直接支出为 $v_m$，年度运营成本为 $O_j$。除紧急救助外，政府按实际有效服务人次补贴 2 元，并设置单站日补贴上限 $L_j$。则服务站 $j$ 年补贴为
+\begin{equation}
+G_j=365\min\left\{2\sum_{m\in\mathcal{M}_p}E_{j,m}^{\mathrm{day}},L_j\right\}.
+\end{equation}
+服务站 $j$ 年利润为
+\begin{equation}
+\Pi_j=\sum_{m\in\mathcal{M}_p}p_mE_{j,m}+G_j-
+\sum_{m=1}^{6}v_mE_{j,m}-O_j.
+\end{equation}
+利润率约束为
+\begin{equation}
+0\leq \rho_j=\frac{\Pi_j}{O_j+\sum_{m=1}^{6}v_mE_{j,m}}\leq 8\%.
+\end{equation}
+
+\subsubsection{目标函数}
+
+小区 $i$ 的价格满意度按其服务需求结构加权：
+\begin{equation}
+S_i^p=\frac{\sum_{m\in\mathcal{M}_p}D_{i,m}^{\mathrm{bd}}S_m^p(p_m)}{\sum_{m\in\mathcal{M}_p}D_{i,m}^{\mathrm{bd}}}.
+\end{equation}
+综合满意度为
+\begin{equation}
+S_i=0.2S_i^d+0.3S_i^r+0.5S_i^p.
+\end{equation}
+因此定价模型的目标函数为
+\begin{equation}
+\max \frac{\sum_{i=1}^{10}N_iS_i}{\sum_{i=1}^{10}N_i}.
+\end{equation}
+
+\subsection{模型的求解}
+
+\subsubsection{临界点枚举算法}
+
+五类收费服务各有 5 个候选价格，总组合数为
+\begin{equation}
+5^5=3125.
+\end{equation}
+对每个价格组合，依次计算价格满意度、服务站收入、政府补贴、直接成本、利润和利润率。删除不满足利润率约束的组合后，在剩余方案中选择加权满意度最高者。若多个方案满意度相同，则选择利润率更接近但不超过 8\% 的方案。
+
+\subsubsection{结果展示方式}
+
+问题三最终结果应给出三类表格。第一，五类收费服务的基准价格、优化价格和价格满意度。第二，各服务站收入、补贴、直接成本、运营成本、利润和利润率。第三，各小区距离满意度、响应满意度、价格满意度和综合满意度。该结果结构能够同时回应题目对定价、利润率、价格满意度和老人满意度的要求。
+
+\subsubsection{可及性分析}
+
+对自理老人而言，助餐和日间照料需求占比较高，价格变动主要影响日常生活服务可及性。对半失能老人而言，上门护理和康复理疗需求更高，补贴能够有效缓解护理支出压力。对失能老人而言，助浴、上门护理和紧急救助需求更集中，其可及性不仅取决于价格，还取决于站点容量和响应能力。因此，问题三的价格优化必须与问题二的容量配置联合解释。
