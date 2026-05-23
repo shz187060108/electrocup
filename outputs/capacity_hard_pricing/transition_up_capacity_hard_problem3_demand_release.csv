@@ -1,0 +1,6 @@
+﻿scenario,station,latent_demand_release_index,unserved_released_monthly_demand
+transition_up,C,1.0,466.9363574151721
+transition_up,E,0.35612405646608236,7146.835841494634
+transition_up,G,1.0,0.0
+transition_up,I,0.7827369080859247,0.0
+transition_up,J,0.7388307790644029,11999.848742196977

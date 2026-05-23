@@ -1,0 +1,6 @@
+﻿scenario,station,latent_demand_release_index,unserved_released_monthly_demand
+fixed_cost_up_20pct,C,1.0,472.77032103991587
+fixed_cost_up_20pct,E,0.29450472321242116,6393.753607825776
+fixed_cost_up_20pct,G,0.6305604982206447,0.0
+fixed_cost_up_20pct,I,0.4350141809030471,0.0
+fixed_cost_up_20pct,J,0.4594963512713491,11088.86627259264

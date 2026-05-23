@@ -1,0 +1,5 @@
+﻿scenario,station,latent_demand_release_index,unserved_released_monthly_demand
+budget_140,A,1.0,0.0
+budget_140,B,0.526879651192177,0.0
+budget_140,G,0.6327894274718285,0.0
+budget_140,I,0.5806505382448053,0.0

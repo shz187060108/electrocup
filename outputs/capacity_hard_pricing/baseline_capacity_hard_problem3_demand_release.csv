@@ -1,0 +1,6 @@
+﻿scenario,station,latent_demand_release_index,unserved_released_monthly_demand
+baseline,C,1.0,472.77032103991587
+baseline,E,0.3522199154517102,6557.954261910341
+baseline,G,1.0,0.0
+baseline,I,0.48240750075612776,0.0
+baseline,J,0.6161907792253891,12362.012106985887
