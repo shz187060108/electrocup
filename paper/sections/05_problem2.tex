@@ -1,0 +1,161 @@
+\section{问题二模型的建立与求解}
+
+问题二要求在预算约束下确定服务站数量、位置和规模。本文将其构造为容量约束最大覆盖选址模型，并进一步引入满意度和有效服务率评价指标。与只追求空间覆盖的传统选址模型不同，本文将空间可达、服务能力和满意度共同纳入评价，使结果能够回答“能否到达、能否服务、服务体验如何”三个问题。
+
+\subsection{模型的建立}
+
+\subsubsection{站点建设变量}
+
+设规模集合为 $\mathcal{S}=\{1,2,3\}$，分别表示小型、中型和大型服务站。定义建设变量
+\begin{equation}
+ x_{j,s}=\begin{cases}
+1, & \text{在小区 }j\text{ 建设规模 }s\text{ 的服务站},\\
+0, & \text{否则}.
+\end{cases}
+\end{equation}
+每个小区最多建设一个服务站：
+\begin{equation}
+\sum_{s\in\mathcal{S}}x_{j,s}\leq 1,\quad j=1,2,\ldots,10.
+\end{equation}
+
+\subsubsection{预算与半径约束}
+
+设规模 $s$ 的建设成本为 $F_s$，总预算为 $B=120$ 万元，则
+\begin{equation}
+\sum_{j=1}^{10}\sum_{s\in\mathcal{S}}F_sx_{j,s}\leq B.
+\end{equation}
+设小区 $i$ 与候选站点 $j$ 的距离为 $d_{i,j}$，有效服务半径为 $R=1000$ 米，定义可达矩阵
+\begin{equation}
+a_{i,j}=\begin{cases}
+1, & d_{i,j}\leq R,\\
+0, & d_{i,j}>R.
+\end{cases}
+\end{equation}
+服务承接比例 $w_{i,j}$ 需满足
+\begin{equation}
+0\leq w_{i,j}\leq a_{i,j}\sum_{s\in\mathcal{S}}x_{j,s}.
+\end{equation}
+
+\subsubsection{感知选择与容量承接约束}
+
+题目规定老人只选择满意度最高的服务站。本文将这一规则作为老人感知层面的主服务站选择，同时在容量核算层面设置实际服务承接比例，用于处理预算内总服务能力不足时的服务人次分配。主服务站变量为
+\begin{equation}
+ z_{i,j}=\begin{cases}
+1, & \text{小区 }i\text{ 的主服务站为 }j,\\
+0, & \text{否则}.
+\end{cases}
+\end{equation}
+对每个小区有
+\begin{equation}
+\sum_{j=1}^{10}z_{i,j}\leq 1.
+\end{equation}
+若小区 $i$ 存在可达服务站，则其主服务站取综合满意度最高的可达站点。该规则在算法分配步骤中实现。
+
+实际服务承接比例满足
+\begin{equation}
+\sum_{j=1}^{10}w_{i,j}\leq 1,\quad i=1,2,\ldots,10.
+\end{equation}
+设小区 $i$ 的日服务需求为
+\begin{equation}
+H_i=\frac{1}{30}\sum_{m=1}^{6}D_{i,m}^{\mathrm{bd}}.
+\end{equation}
+规模 $s$ 的日服务能力为 $Q_s$，则服务站 $j$ 的容量约束为
+\begin{equation}
+\sum_{i=1}^{10}H_iw_{i,j}\leq \sum_{s\in\mathcal{S}}Q_sx_{j,s},\quad j=1,2,\ldots,10.
+\label{eq:capacity}
+\end{equation}
+
+\subsubsection{满意度与评价指标}
+
+根据满意度规则，综合满意度由距离、响应和价格三部分构成：
+\begin{equation}
+S_{i,j}=0.2S_{i,j}^{d}+0.3S_{i,j}^{r}+0.5S^p.
+\end{equation}
+问题二中价格暂按基准价格计，故 $S^p=1$。服务覆盖率定义为
+\begin{equation}
+C=\frac{\sum_{i=1}^{10}N_i\mathbb{I}\left(\sum_{j=1}^{10}a_{i,j}\sum_sx_{j,s}>0\right)}{\sum_{i=1}^{10}N_i}.
+\end{equation}
+容量满足率定义为
+\begin{equation}
+\Phi=\frac{\sum_{i=1}^{10}\sum_{j=1}^{10}H_iw_{i,j}}{\sum_{i=1}^{10}H_i}.
+\end{equation}
+有效服务率定义为
+\begin{equation}
+\Psi=\frac{\sum_{i=1}^{10}\sum_{j=1}^{10}H_iw_{i,j}S_{i,j}}{\sum_{i=1}^{10}H_i}.
+\end{equation}
+服务加权满意度定义为
+\begin{equation}
+\bar{S}=\frac{\sum_{i=1}^{10}\sum_{j=1}^{10}H_iw_{i,j}S_{i,j}}{\sum_{i=1}^{10}\sum_{j=1}^{10}H_iw_{i,j}}.
+\end{equation}
+
+\subsubsection{分层优化目标}
+
+考虑社区养老服务的公益属性，本文采用分层优化目标：
+\begin{align}
+&\max C,\\
+&\max \Phi \quad \text{given } C=C^*,\\
+&\max \Psi \quad \text{given } C=C^*,\Phi=\Phi^*,\\
+&\max \bar{S} \quad \text{given } C=C^*,\Phi=\Phi^*,\Psi=\Psi^*.
+\end{align}
+该目标顺序体现“先可达、再可承接、再高质量”的公共服务配置逻辑。
+
+\subsection{模型的求解}
+
+\subsubsection{全枚举剪枝算法}
+
+由于 10 个候选小区各有不建、小型、中型、大型四种状态，全部组合数为
+\begin{equation}
+4^{10}=1048576.
+\end{equation}
+本文采用全枚举剪枝算法。首先枚举所有站点位置与规模组合；其次删除总建设成本超过预算的组合；然后根据距离矩阵计算每个小区的可达站点集合，并按满意度最高原则确定主服务站；最后在容量约束下分配实际服务承接比例，计算覆盖率、容量满足率、有效服务率和服务加权满意度，按分层目标选择最优方案。
+
+枚举搜索复杂度为
+\begin{equation}
+O(4^n n^2),\quad n=10.
+\end{equation}
+该复杂度在本题规模下完全可接受，且结果不受遗传算法、模拟退火等随机算法参数影响。
+
+\subsubsection{选址结果}
+
+\begin{table}[H]
+\centering
+\caption{问题二基准情景最优站点方案}
+\label{tab:p2_result}
+\begin{tabular}{c c c c c}
+\toprule
+站点位置 & C & E & G & I & J \\
+\midrule
+建设规模 & 小型 & 小型 & 小型 & 小型 & 大型 \\
+日服务能力 & 1000 & 1000 & 1000 & 1000 & 3000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+表 \ref{tab:p2_result} 给出的方案总建设成本为 117 万元，未超过 120 万元预算。该方案形成多点嵌入、核心大站兜底的空间格局：小型站提升局部可达性和响应满意度，大型站承担跨小区容量调节和高需求片区兜底服务。
+
+\begin{table}[H]
+\centering
+\caption{问题二核心评价指标}
+\label{tab:p2_metrics}
+\begin{tabular}{c c}
+\toprule
+指标 & 数值 \\
+\midrule
+空间覆盖率 & 1.0000 \\
+容量满足率 & 0.8499 \\
+有效服务率 & 0.7439 \\
+服务加权满意度 & 0.8753 \\
+服务老人代理覆盖率 & 0.8504 \\
+总日需求量 & 8236.67 \\
+已承接日需求量 & 7000.00 \\
+未承接日需求量 & 1236.67 \\
+总建设成本 & 117 万元 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+由表 \ref{tab:p2_metrics} 可知，基准方案实现了 100\% 空间覆盖，但由于 120 万元预算下最大可配置能力为 7000 人次/日，而第 5 年日需求达到 8236.67 人次，因此容量满足率为 0.8499。这说明本题的关键瓶颈已经由能否覆盖转向能否承接，因此仅报告空间覆盖率不足以评价服务站配置质量。
+
+\subsubsection{结果解释}
+
+从服务体系角度看，C、E、G、I、J 五个站点能够覆盖全部小区，并通过小型站贴近需求源、大型站提供容量兜底的方式，提高整体满意度。C 和 G 分别对应中高需求片区，E 和 I 改善周边小区的服务距离，J 站作为大型站承担较高容量。该结构比单纯集中建设大站更符合嵌入式养老服务近邻可达的政策含义。
